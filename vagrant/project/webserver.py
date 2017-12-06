@@ -1,4 +1,6 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
+import cgi
+import pdb
 
 
 class webserverHandler(BaseHTTPRequestHandler):
@@ -10,9 +12,12 @@ class webserverHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
 
-                output = "".encode()
-                output += "<html><body>Hello!</body></html>".encode()
-                self.wfile.write(output)
+                output = ""
+                output += "<html><body>"
+                output += "Hello!"
+                output += '''<form method='POST' enctype='multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name="message" type="text" ><input type="submit" value="Submit"></form>'''
+                output += "</body></html>"
+                self.wfile.write(output.encode())
                 print(output)
                 return
 
@@ -21,20 +26,49 @@ class webserverHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
 
-                output = "".encode()
-                output += "<html><body>&#161Hola <a href = '/hello'>Back to Hello \
-                </a></body></html>".encode()
-                self.wfile.write(output)
+                output = ""
+                output += "<html><body>"
+                output += "<h1>&#161Hola </h1>"
+                output += '''<form method='POST' enctype='multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name="message" type="text" ><input type="submit" value="Submit"></form>'''
+                output += "</body></html>"
+                self.wfile.write(output.encode())
                 print(output)
                 return
 
         except IOError:
             self.send_error(404, "File Not Found {}".format(self.path))
 
+    def do_POST(self):
+        try:
+            self.send_response(301)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            ctype, pdict = cgi.parse_header(
+                self.headers['content-type'])
+
+            # pdict['boundary'] is of string type and needs to be byte-type
+            pdict['boundary'] = pdict['boundary'].encode()
+
+            if ctype == 'multipart/form-data':
+                fields = cgi.parse_multipart(self.rfile, pdict)
+                messagecontent = fields.get('message')
+            output = ""
+            output += "<html><body>"
+            output += " <h2> Okay, how about this: </h2>"
+            output += "<h1> {} </h1>".format(messagecontent[0].decode())
+            output += '''<form method='POST' enctype='multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name="message" type="text" ><input type="submit" value="Submit"> </form>'''
+            output += "</body></html>"
+            self.wfile.write(output.encode())
+            print(output)
+
+        except:
+            pass
+
 
 def main():
     try:
         port = 8080
+
         server = HTTPServer(('', port), webserverHandler)
         print("Web server running on port {}".format(port))
         server.serve_forever()
@@ -42,6 +76,7 @@ def main():
     except KeyboardInterrupt:
         print("^C entered, stopping web server...")
         server.socket.close()
+
 
 if __name__ == '__main__':
     main()
