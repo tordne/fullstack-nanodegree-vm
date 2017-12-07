@@ -23,6 +23,15 @@ class webserverHandler(BaseHTTPRequestHandler):
             This contains the body for the hello pages.
     '''
 
+    main_page_head = '''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <title>{title}</title>
+    </head>
+    '''
+
 
     def do_GET(self):
         '''
