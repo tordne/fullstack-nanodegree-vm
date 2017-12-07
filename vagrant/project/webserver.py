@@ -32,6 +32,22 @@ class webserverHandler(BaseHTTPRequestHandler):
     </head>
     '''
 
+    hello_get_page_content = '''
+    <body>
+      <header>
+          <h2>{title}{/h2}
+      </header>
+      <main>
+        <section>
+          <form method='POST' enctype='multipart/form-data' action='/hello'>
+            <h3>What would you like me to say?</h3>
+            <input name="message" type="text" ><input type="submit" value="Submit">
+          </form>
+        </section>
+      </main>
+    </body>
+    </html>
+    '''
 
     def do_GET(self):
         '''
@@ -39,35 +55,39 @@ class webserverHandler(BaseHTTPRequestHandler):
         it will send a 404 error
         '''
         try:
+            # Try the hello path
             if self.path.endswith("/hello"):
                 # Send a 200 response
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
 
-                output = ""
-                output += "<html><body>"
-                output += "Hello!"
-                output += '''<form method='POST' enctype='multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name="message" type="text" ><input type="submit" value="Submit"></form>'''
-                output += "</body></html>"
+                # Set the page_title
+                page_title = 'Hello!'
+
+                # combine all the html into 1 output variable
+                output = main_page_head.format(
+                    page_title) + hello_get_page_content.format(
+                    page_title)
+
                 self.wfile.write(output.encode())
                 print(output)
                 return
 
+            # Try the hola path
             if self.path.endswith("/hola"):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
 
-                output = ""
-                output += "<html><body>"
-                output += "<h1>&#161Hola </h1>"
-                output += '''
-                <form method='POST' enctype='multipart/form-data' action='/hello'>
-                    <h2>What would you like me to say?</h2>
-                    <input name="message" type="text" ><input type="submit" value="Submit">
-                </form>'''
-                output += "</body></html>"
+                # Set the page_title
+                page_title = '&#161Hola'
+
+                # combine all the html into 1 output variable
+                output = main_page_head.format(
+                    page_title) + hello_get_page_content.format(
+                    page_title)
+
                 self.wfile.write(output.encode())
                 print(output)
                 return
@@ -76,8 +96,6 @@ class webserverHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
-
-
 
         except IOError:
             self.send_error(404, "File Not Found {}".format(self.path))
