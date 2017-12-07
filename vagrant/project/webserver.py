@@ -1,13 +1,37 @@
+#!/usr/bin/env python3.5
+
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import cgi
 import pdb
 
 
 class webserverHandler(BaseHTTPRequestHandler):
+    '''
+    webserverHandler is a subclass of BaseHTTPRequestHandler
+    The class has  2 methods added:
+        * do_GET :
+            This method will retrieve the path requested and
+            output the HTML
+        * do_POST :
+            This method will post new data to the server and
+            respond with the requested HTML and data
+
+    The Class also has several variables which contain the html
+        * main_page_head :
+            This contains the basic header for all the pages
+        * hello_page_content :
+            This contains the body for the hello pages.
+    '''
+
 
     def do_GET(self):
+        '''
+        do_GET method will try to search for the requested path else
+        it will send a 404 error
+        '''
         try:
             if self.path.endswith("/hello"):
+                # Send a 200 response
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
@@ -29,16 +53,31 @@ class webserverHandler(BaseHTTPRequestHandler):
                 output = ""
                 output += "<html><body>"
                 output += "<h1>&#161Hola </h1>"
-                output += '''<form method='POST' enctype='multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name="message" type="text" ><input type="submit" value="Submit"></form>'''
+                output += '''
+                <form method='POST' enctype='multipart/form-data' action='/hello'>
+                    <h2>What would you like me to say?</h2>
+                    <input name="message" type="text" ><input type="submit" value="Submit">
+                </form>'''
                 output += "</body></html>"
                 self.wfile.write(output.encode())
                 print(output)
                 return
 
+            if self.path.endswith("restaurant"):
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+
+
+
         except IOError:
             self.send_error(404, "File Not Found {}".format(self.path))
 
     def do_POST(self):
+        '''
+        do_POST method will send a 301 response with the content retrieved
+        from the form
+        '''
         try:
             self.send_response(301)
             self.send_header('Content-type', 'text/html')
@@ -66,6 +105,11 @@ class webserverHandler(BaseHTTPRequestHandler):
 
 
 def main():
+    '''
+    Start a HTTPServer on port 8080
+    and let the server run forever
+    Untill there is a KeyboardInterrupt by ^C
+    '''
     try:
         port = 8080
 
