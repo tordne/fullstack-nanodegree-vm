@@ -51,6 +51,24 @@ class webserverHandler(BaseHTTPRequestHandler):
     </html>
     '''
 
+    hello_post_page_content = '''
+    <body>
+      <header>
+          <h2>Okay, how about this:</h2>
+          <h3>{message}</h3>
+      </header>
+      <main>
+        <section>
+          <form method='POST' enctype='multipart/form-data' action='/hello'>
+            <h3>What would you like me to say?</h3>
+            <input name="message" type="text" ><input type="submit" value="Submit">
+          </form>
+        </section>
+      </main>
+    </body>
+    </html>
+    '''
+
     def do_GET(self):
         '''
         do_GET method will try to search for the requested path
@@ -110,26 +128,34 @@ class webserverHandler(BaseHTTPRequestHandler):
             self.send_response(301)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
+
+            # Parse a MIME header and save the content-type values in ctype and pdict
             ctype, pdict = cgi.parse_header(
                 self.headers['content-type'])
 
-            # pdict['boundary'] is of string type and needs to be byte-type
+            # encode the boundary into a byte-type
             pdict['boundary'] = pdict['boundary'].encode()
 
+            # Check if the Content-type is a multipart,
+            # then parse it according to the boundary and extract the message data
             if ctype == 'multipart/form-data':
                 fields = cgi.parse_multipart(self.rfile, pdict)
                 messagecontent = fields.get('message')
-            output = ""
-            output += "<html><body>"
-            output += " <h2> Okay, how about this: </h2>"
-            output += "<h1> {} </h1>".format(messagecontent[0].decode())
-            output += '''<form method='POST' enctype='multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name="message" type="text" ><input type="submit" value="Submit"> </form>'''
-            output += "</body></html>"
+
+            # Set the page_title
+            page_title = 'Hello!'
+
+			# combine all the html into 1 output variable
+            output = self.main_page_head.format(title=page_title)
+            output += self.hello_post_page_content.format(message=messagecontent[0].decode())
+
             self.wfile.write(output.encode())
             print(output)
 
         except:
             pass
+
+
 
 
 def main():
