@@ -16,11 +16,13 @@ class webserverHandler(BaseHTTPRequestHandler):
             This method will post new data to the server and
             respond with the requested HTML and data
 
-    The Class also has several variables which contain the html
+    The Class also has several class variables which contain the html
         * main_page_head :
             This contains the basic header for all the pages
-        * hello_page_content :
-            This contains the body for the hello pages.
+        * hello_get_page_content :
+            This contains the body for the hello pages
+        * hello_post_page_content:
+            This contains the body for the posted hello pages
     '''
 
     main_page_head = '''
@@ -35,7 +37,7 @@ class webserverHandler(BaseHTTPRequestHandler):
     hello_get_page_content = '''
     <body>
       <header>
-          <h2>{title}{/h2}
+          <h2>{title}</h2>
       </header>
       <main>
         <section>
@@ -51,8 +53,8 @@ class webserverHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         '''
-        do_GET method will try to search for the requested path else
-        it will send a 404 error
+        do_GET method will try to search for the requested path
+        else it will send a 404 error
         '''
         try:
             # Try the hello path
@@ -66,9 +68,8 @@ class webserverHandler(BaseHTTPRequestHandler):
                 page_title = 'Hello!'
 
                 # combine all the html into 1 output variable
-                output = main_page_head.format(
-                    page_title) + hello_get_page_content.format(
-                    page_title)
+                output = self.main_page_head.format(title=page_title)
+                output += self.hello_get_page_content.format(title=page_title)
 
                 self.wfile.write(output.encode())
                 print(output)
@@ -84,10 +85,10 @@ class webserverHandler(BaseHTTPRequestHandler):
                 page_title = '&#161Hola'
 
                 # combine all the html into 1 output variable
-                output = main_page_head.format(
-                    page_title) + hello_get_page_content.format(
-                    page_title)
+                output = self.main_page_head.format(title=page_title)
+                output += self.hello_get_page_content.format(title=page_title)
 
+                #
                 self.wfile.write(output.encode())
                 print(output)
                 return
