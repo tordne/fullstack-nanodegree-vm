@@ -47,17 +47,19 @@ class webserverHandler(BaseHTTPRequestHandler):
     <head>
       <meta charset="utf-8">
       <title>{title}</title>
-      <link rel="stylesheet" type="text/css" href"css/styles.css">
+      <link rel="stylesheet" type="text/css" href="css/styles.css">
     </head>
     '''
 
     hello_get_page_content = '''
     <body>
-      <header>
+      <header class="header">
+        <div class="header-inner">
           <h2>{title}</h2>
+        </div>
       </header>
       <main>
-        <section>
+        <section class="main-inner">
           <form method='POST' enctype='multipart/form-data' action='/hello'>
             <h3>What would you like me to say?</h3>
             <input name="message" type="text" ><input type="submit" value="Submit">
@@ -70,12 +72,14 @@ class webserverHandler(BaseHTTPRequestHandler):
 
     hello_post_page_content = '''
     <body>
-      <header>
+      <header class="header">
+        <div class="header-inner">
           <h2>Okay, how about this:</h2>
           <h3>{message}</h3>
+        </div>
       </header>
       <main>
-        <section>
+        <section class="main-inner">
           <form method='POST' enctype='multipart/form-data' action='/hello'>
             <h3>What would you like me to say?</h3>
             <input name="message" type="text" ><input type="submit" value="Submit">
@@ -96,11 +100,13 @@ class webserverHandler(BaseHTTPRequestHandler):
 
     restaurant_get_page_content = '''
     <body>
-      <header>
+      <header class="header">
+        <div class="header-inner">
           <h2>{title}</h2>
+        </div>
       </header>
       <main>
-        <section>
+        <section class="main-inner">
           {restaurant_list}
         </section>
       </main>
