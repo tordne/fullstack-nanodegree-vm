@@ -111,6 +111,9 @@ class webserverHandler(BaseHTTPRequestHandler):
       <main>
         <section class="main-inner">
           {restaurant_list}
+          <div class='create_restaurant'>
+            <a href="/restaurant/new">Make a New Restaurant Here</a>
+          </div>
         </section>
       </main>
     </body>
@@ -192,7 +195,7 @@ class webserverHandler(BaseHTTPRequestHandler):
                 # Place all the names in the restaurant list HTML
                 full_list = ''
                 for restaurant in session.query(Restaurant).order_by(
-                	Restaurant.id):
+                        Restaurant.id):
                     full_list += self.restaurant_list_content.format(
                         restaurant_name=restaurant.name)
 
