@@ -1,5 +1,8 @@
 #!/usr/bin/env python3.5
 
+from os import getcwd
+from os.path import join
+
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import cgi
 
@@ -120,6 +123,23 @@ class webserverHandler(BaseHTTPRequestHandler):
         else it will send a 404 error
         '''
         try:
+            # Try to get the CSS file
+            if self.path.endswith("css"):
+                # send a 200 response
+                self.send_response(200)
+                self.send_header('Content-type', 'text/css')
+                self.end_headers()
+
+                # retrieve the css and put it in an output variable
+                with open(getcwd() + self.path, 'r') as css_file:
+                    output = css_file.read()
+
+                # Add the output to the output stream to respond back to the
+                # client
+                self.wfile.write(output.encode())
+                print(output)
+                return
+
             # Try the hello path
             if self.path.endswith("/hello"):
                 # Send a 200 response
@@ -134,7 +154,8 @@ class webserverHandler(BaseHTTPRequestHandler):
                 output = self.main_page_head.format(title=page_title)
                 output += self.hello_get_page_content.format(title=page_title)
 
-                # Add all the output to the output stream to respond back to client
+                # Add all the output to the output stream to respond back to
+                # client
                 self.wfile.write(output.encode())
                 print(output)
                 return
@@ -152,7 +173,8 @@ class webserverHandler(BaseHTTPRequestHandler):
                 output = self.main_page_head.format(title=page_title)
                 output += self.hello_get_page_content.format(title=page_title)
 
-                # Add all the output to the output stream to respond back to client
+                # Add all the output to the output stream to respond back to
+                # client
                 self.wfile.write(output.encode())
                 print(output)
                 return
@@ -169,7 +191,8 @@ class webserverHandler(BaseHTTPRequestHandler):
                 # Connect to the restaurant DB and query for all restaurant names
                 # Place all the names in the restaurant list HTML
                 full_list = ''
-                for restaurant in session.query(Restaurant).order_by(Restaurant.id):
+                for restaurant in session.query(Restaurant).order_by(
+                	Restaurant.id):
                     full_list += self.restaurant_list_content.format(
                         restaurant_name=restaurant.name)
 
@@ -179,7 +202,8 @@ class webserverHandler(BaseHTTPRequestHandler):
                     title=page_title,
                     restaurant_list=full_list)
 
-                # Add all the output to the output stream to respond back to client
+                # Add all the output to the output stream to respond back to
+                # client
                 self.wfile.write(output.encode())
                 print(output)
                 return
