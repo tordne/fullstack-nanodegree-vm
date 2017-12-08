@@ -97,7 +97,7 @@ class webserverHandler(BaseHTTPRequestHandler):
     restaurant_list_content = '''
     <div>
       <h3>{restaurant_name}</h3>
-      <a href="#">Edit</a>
+      <a href="/restaurant/edit/{restaurant_id}">Edit</a>
       <a href="/restaurant/delete/{restaurant_id}">Delete</a>
     </div>
     '''
@@ -140,6 +140,27 @@ class webserverHandler(BaseHTTPRequestHandler):
     </html>
     '''
 
+    restaurant_edit_get_page_content = '''
+    <body>
+      <header class="header">
+        <div class="header-inner">
+          <h2>{title}</h2>
+        </div>
+      </header>
+      <main>
+        <section class="main-inner">
+          <h3>Rename {restaurant_name}</h3>
+          <form method='POST' enctype='multipart/form-data' action='/restaurant/edit'>
+            <input type="hidden" value="{restaurant_id}" name="restaurant_id">
+            <input name="restaurant_name" type="text" >
+            <input type="submit" value="Edit">
+          </form>
+        </section>
+      </main>
+    </body>
+    </html>
+    '''
+
     restaurant_delete_get_page_content = '''
     <body>
       <header class="header">
@@ -149,7 +170,7 @@ class webserverHandler(BaseHTTPRequestHandler):
       </header>
       <main>
         <section class="main-inner">
-        <h3>Are you sure you want to delete {restaurant_name}</h3>
+          <h3>Are you sure you want to delete {restaurant_name}</h3>
           <form method='POST' enctype='multipart/form-data' action='/restaurant/delete'>
             <input type="hidden" value="{restaurant_id}" name="restaurant_id">
             <input type="submit" value="Delete">
@@ -265,6 +286,36 @@ class webserverHandler(BaseHTTPRequestHandler):
                 output = self.main_page_head.format(title=page_title)
                 output += self.restaurant_new_GaP_page_content.format(
                     title=page_title)
+
+                # Add all the output to the output stream to respond back to
+                # client
+                self.wfile.write(output.encode())
+                print(output)
+                return
+
+            # Try the Restaurant/edit path
+            if self.path.startswith("/restaurant/edit/"):
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+
+                # Get restaurant ID from the path
+                restaurant_id = self.path.strip('/restaurant/edit/')
+
+                # Get the restaurant name from the DB
+                for restaurant in session.query(Restaurant).filter(
+                        Restaurant.id == restaurant_id):
+                    restaurant_name = restaurant.name
+
+                # Set the page title
+                page_title = 'Rename {name}'.format(name=restaurant_name)
+
+                # combine all the html into 1 output variable
+                output = self.main_page_head.format(title=page_title)
+                output += self.restaurant_edit_get_page_content.format(
+                    title=page_title,
+                    restaurant_name=restaurant_name,
+                    restaurant_id=restaurant.id)
 
                 # Add all the output to the output stream to respond back to
                 # client
@@ -395,6 +446,36 @@ class webserverHandler(BaseHTTPRequestHandler):
 
                     # Delete the restaurant
                     session.delete(restaurant)
+                    session.commit()
+                return
+
+            if self.path.endswith("restaurant/edit"):
+                self.send_response(301)
+                self.send_header('Content-type', 'text/html')
+                self.send_header('Location', '/restaurant')
+                self.end_headers()
+
+                # Parse a MIME header and save the content-type values in ctype and
+                # pdict
+                ctype, pdict = cgi.parse_header(
+                    self.headers['content-type'])
+
+                # encode the boundary into a byte-type
+                pdict['boundary'] = pdict['boundary'].encode()
+
+                # Check if the Content-type is a multipart,
+                # then parse it according to the boundary, extract the name
+                # and add it to the DB using SQLAlchemy
+                if ctype == 'multipart/form-data':
+                    fields = cgi.parse_multipart(self.rfile, pdict)
+                    restaurant_id = fields.get('restaurant_id')[0].decode()
+                    restaurant_name = fields.get('restaurant_name')[0].decode()
+
+                    restaurant = session.query(Restaurant).filter(
+                        Restaurant.id == restaurant_id).one()
+
+                    # Update the restaurants name
+                    restaurant.name = restaurant_name
                     session.commit()
                 return
 
