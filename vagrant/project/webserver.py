@@ -137,6 +137,26 @@ class webserverHandler(BaseHTTPRequestHandler):
     </html>
     '''
 
+    restaurant_delete_get_page_content = '''
+    <body>
+      <header class="header">
+        <div class="header-inner">
+          <h2>{title}</h2>
+        </div>
+      </header>
+      <main>
+        <section class="main-inner">
+        <h3>Are you sure you want to delete {restaurant_name}</h3>
+          <form method='POST' enctype='multipart/form-data' action='/restaurant/delete'>
+            <input type="hidden" value="{restaurant_id}" name="restaurant_id">
+            <input type="submit" value="Delete">
+          </form>
+        </section>
+      </main>
+    </body>
+    </html>
+    '''
+
     def do_GET(self):
         '''
         do_GET method will try to search for the requested path
@@ -242,6 +262,36 @@ class webserverHandler(BaseHTTPRequestHandler):
                 output = self.main_page_head.format(title=page_title)
                 output += self.restaurant_new_GaP_page_content.format(
                     title=page_title)
+
+                # Add all the output to the output stream to respond back to
+                # client
+                self.wfile.write(output.encode())
+                print(output)
+                return
+
+            # Try the Restaurant/delete path
+            if self.path.startswith("/restaurant/delete/"):
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+
+                # Get restaurant ID from the path
+                restaurant_id = self.path.strip('/restaurant/delete/')
+
+                # Get the restaurant name from the DB
+                for restaurant in session.query(Restaurant).filter(
+                        Restaurant.id == restaurant_id):
+                    restaurant_name = restaurant.name
+
+                # Set the page title
+                page_title = 'Delete {name}'.format(name=restaurant_name)
+
+                # combine all the html into 1 output variable
+                output = self.main_page_head.format(title=page_title)
+                output += self.restaurant_delete_get_page_content.format(
+                    title=page_title,
+                    restaurant_name=restaurant_name,
+                    restaurant_id=restaurant.id)
 
                 # Add all the output to the output stream to respond back to
                 # client
