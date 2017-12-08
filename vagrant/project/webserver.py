@@ -85,6 +85,26 @@ class webserverHandler(BaseHTTPRequestHandler):
     </html>
     '''
 
+    restaurant_list_content = '''
+    <div style='height: 2em;'>
+      <h3>{restaurant_name}</h3>
+    </div>
+    '''
+
+    restaurant_get_page_content = '''
+    <body>
+      <header>
+          <h2>{title}</h2>
+      </header>
+      <main>
+        <section>
+          {restaurant_list}
+        </section>
+      </main>
+    </body>
+    </html>
+    '''
+
     def do_GET(self):
         '''
         do_GET method will try to search for the requested path
@@ -105,6 +125,7 @@ class webserverHandler(BaseHTTPRequestHandler):
                 output = self.main_page_head.format(title=page_title)
                 output += self.hello_get_page_content.format(title=page_title)
 
+                # Add all the output to the output stream to respond back to client
                 self.wfile.write(output.encode())
                 print(output)
                 return
@@ -122,15 +143,37 @@ class webserverHandler(BaseHTTPRequestHandler):
                 output = self.main_page_head.format(title=page_title)
                 output += self.hello_get_page_content.format(title=page_title)
 
-                #
+                # Add all the output to the output stream to respond back to client
                 self.wfile.write(output.encode())
                 print(output)
                 return
 
+            # Try the Restaurant listing path
             if self.path.endswith("restaurant"):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
+
+                # Set the page title
+                page_title = 'Restaurant List'
+
+                # Connect to the restaurant DB and query for all restaurant names
+                # Place all the names in the restaurant list HTML
+                full_list = ''
+                for restaurant in session.query(Restaurant).order_by(Restaurant.id):
+                    full_list += self.restaurant_list_content.format(
+                        restaurant_name=restaurant.name)
+
+                # Combine all the html into 1 output variable
+                output = self.main_page_head.format(title=page_title)
+                output += self.restaurant_get_page_content.format(
+                    title=page_title,
+                    restaurant_list=full_list)
+
+                # Add all the output to the output stream to respond back to client
+                self.wfile.write(output.encode())
+                print(output)
+                return
 
         except IOError:
             self.send_error(404, "File Not Found {}".format(self.path))
