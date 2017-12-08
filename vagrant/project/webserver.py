@@ -1,7 +1,6 @@
 #!/usr/bin/env python3.5
 
 from os import getcwd
-from os.path import join
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import cgi
@@ -50,7 +49,7 @@ class webserverHandler(BaseHTTPRequestHandler):
     <head>
       <meta charset="utf-8">
       <title>{title}</title>
-      <link rel="stylesheet" type="text/css" href="css/styles.css">
+      <link rel="stylesheet" type="text/css" href="/css/styles.css">
     </head>
     '''
 
