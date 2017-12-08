@@ -2,7 +2,23 @@
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import cgi
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from database_setup import Restaurant, Base, MenuItem
+
 import pdb
+
+# Create the db engine
+engine = create_engine('sqlite:///restaurantmenu.db')
+# Bind the engine to the Base.metadata
+Base.metadata.binnd = engine
+
+# Create the DBSession staging zone
+DBSession = sessionmaker(bind=engine)
+# Create a session for the DB
+session = DBSession()
 
 
 class webserverHandler(BaseHTTPRequestHandler):
@@ -129,7 +145,8 @@ class webserverHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
 
-            # Parse a MIME header and save the content-type values in ctype and pdict
+            # Parse a MIME header and save the content-type values in ctype and
+            # pdict
             ctype, pdict = cgi.parse_header(
                 self.headers['content-type'])
 
@@ -137,7 +154,8 @@ class webserverHandler(BaseHTTPRequestHandler):
             pdict['boundary'] = pdict['boundary'].encode()
 
             # Check if the Content-type is a multipart,
-            # then parse it according to the boundary and extract the message data
+            # then parse it according to the boundary and extract the message
+            # data
             if ctype == 'multipart/form-data':
                 fields = cgi.parse_multipart(self.rfile, pdict)
                 messagecontent = fields.get('message')
@@ -145,17 +163,16 @@ class webserverHandler(BaseHTTPRequestHandler):
             # Set the page_title
             page_title = 'Hello!'
 
-			# combine all the html into 1 output variable
+            # combine all the html into 1 output variable
             output = self.main_page_head.format(title=page_title)
-            output += self.hello_post_page_content.format(message=messagecontent[0].decode())
+            output += self.hello_post_page_content.format(
+                message=messagecontent[0].decode())
 
             self.wfile.write(output.encode())
             print(output)
 
         except:
             pass
-
-
 
 
 def main():
