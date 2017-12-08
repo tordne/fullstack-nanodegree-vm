@@ -101,7 +101,7 @@ class webserverHandler(BaseHTTPRequestHandler):
     </div>
     '''
 
-    restaurant_get_page_content = '''
+    restaurant_list_get_page_content = '''
     <body>
       <header class="header">
         <div class="header-inner">
@@ -114,6 +114,24 @@ class webserverHandler(BaseHTTPRequestHandler):
           <div class='create_restaurant'>
             <a href="/restaurant/new">Make a New Restaurant Here</a>
           </div>
+        </section>
+      </main>
+    </body>
+    </html>
+    '''
+
+    restaurant_new_GaP_page_content = '''
+    <body>
+      <header class="header">
+        <div class="header-inner">
+          <h2>{title}</h2>
+        </div>
+      </header>
+      <main>
+        <section class="main-inner">
+          <form method='POST' enctype='multipart/form-data' action='/restaurant/new'>
+            <input name="restaurant_name" type="text" ><input type="submit" value="Create">
+          </form>
         </section>
       </main>
     </body>
@@ -201,9 +219,29 @@ class webserverHandler(BaseHTTPRequestHandler):
 
                 # Combine all the html into 1 output variable
                 output = self.main_page_head.format(title=page_title)
-                output += self.restaurant_get_page_content.format(
+                output += self.restaurant_list_get_page_content.format(
                     title=page_title,
                     restaurant_list=full_list)
+
+                # Add all the output to the output stream to respond back to
+                # client
+                self.wfile.write(output.encode())
+                print(output)
+                return
+
+            # Try the Restaurant/new path
+            if self.path.endswith("restaurant/new"):
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+
+                # Set the page title
+                page_title = 'Create a New Restaurant'
+
+                # combine all the html into 1 output variable
+                output = self.main_page_head.format(title=page_title)
+                output += self.restaurant_new_GaP_page_content.format(
+                    title=page_title)
 
                 # Add all the output to the output stream to respond back to
                 # client
