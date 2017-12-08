@@ -47,6 +47,7 @@ class webserverHandler(BaseHTTPRequestHandler):
     <head>
       <meta charset="utf-8">
       <title>{title}</title>
+      <link rel="stylesheet" type="text/css" href"css/styles.css">
     </head>
     '''
 
@@ -86,8 +87,10 @@ class webserverHandler(BaseHTTPRequestHandler):
     '''
 
     restaurant_list_content = '''
-    <div style='height: 2em;'>
+    <div>
       <h3>{restaurant_name}</h3>
+      <a href="#">Edit</a>
+      <a href="#">Delete</a>
     </div>
     '''
 
