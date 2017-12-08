@@ -96,7 +96,7 @@ class webserverHandler(BaseHTTPRequestHandler):
     <div>
       <h3>{restaurant_name}</h3>
       <a href="#">Edit</a>
-      <a href="#">Delete</a>
+      <a href="/restaurant/delete/{restaurant_id}">Delete</a>
     </div>
     '''
 
@@ -214,7 +214,8 @@ class webserverHandler(BaseHTTPRequestHandler):
                 for restaurant in session.query(Restaurant).order_by(
                         Restaurant.id):
                     full_list += self.restaurant_list_content.format(
-                        restaurant_name=restaurant.name)
+                        restaurant_name=restaurant.name,
+                        restaurant_id=restaurant.id)
 
                 # Combine all the html into 1 output variable
                 output = self.main_page_head.format(title=page_title)
