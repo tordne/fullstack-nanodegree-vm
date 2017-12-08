@@ -64,7 +64,8 @@ class webserverHandler(BaseHTTPRequestHandler):
         <section class="main-inner">
           <form method='POST' enctype='multipart/form-data' action='/hello'>
             <h3>What would you like me to say?</h3>
-            <input name="message" type="text" ><input type="submit" value="Submit">
+            <input name="message" type="text" >
+            <input type="submit" value="Submit">
           </form>
         </section>
       </main>
@@ -84,7 +85,8 @@ class webserverHandler(BaseHTTPRequestHandler):
         <section class="main-inner">
           <form method='POST' enctype='multipart/form-data' action='/hello'>
             <h3>What would you like me to say?</h3>
-            <input name="message" type="text" ><input type="submit" value="Submit">
+            <input name="message" type="text" >
+            <input type="submit" value="Submit">
           </form>
         </section>
       </main>
@@ -129,7 +131,8 @@ class webserverHandler(BaseHTTPRequestHandler):
       <main>
         <section class="main-inner">
           <form method='POST' enctype='multipart/form-data' action='/restaurant/new'>
-            <input name="restaurant_name" type="text" ><input type="submit" value="Create">
+            <input name="restaurant_name" type="text" >
+            <input type="submit" value="Create">
           </form>
         </section>
       </main>
@@ -364,7 +367,35 @@ class webserverHandler(BaseHTTPRequestHandler):
                     # add the new restaurant
                     session.add(Restaurant(name=name[0].decode()))
                     session.commit()
+                return
 
+            if self.path.endswith("restaurant/delete"):
+                self.send_response(301)
+                self.send_header('Content-type', 'text/html')
+                self.send_header('Location', '/restaurant')
+                self.end_headers()
+
+                # Parse a MIME header and save the content-type values in ctype and
+                # pdict
+                ctype, pdict = cgi.parse_header(
+                    self.headers['content-type'])
+
+                # encode the boundary into a byte-type
+                pdict['boundary'] = pdict['boundary'].encode()
+
+                # Check if the Content-type is a multipart,
+                # then parse it according to the boundary, extract the name
+                # and add it to the DB using SQLAlchemy
+                if ctype == 'multipart/form-data':
+                    fields = cgi.parse_multipart(self.rfile, pdict)
+                    restaurant_id = fields.get('restaurant_id')[0].decode()
+
+                    restaurant = session.query(Restaurant).filter(
+                        Restaurant.id == restaurant_id).one()
+
+                    # Delete the restaurant
+                    session.delete(restaurant)
+                    session.commit()
                 return
 
         except:
