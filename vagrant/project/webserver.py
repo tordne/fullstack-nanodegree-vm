@@ -257,35 +257,37 @@ class webserverHandler(BaseHTTPRequestHandler):
         from the form
         '''
         try:
-            self.send_response(301)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
+            if self.path.endswith("hello"):
+                self.send_response(301)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
 
-            # Parse a MIME header and save the content-type values in ctype and
-            # pdict
-            ctype, pdict = cgi.parse_header(
-                self.headers['content-type'])
+                # Parse a MIME header and save the content-type values in ctype and
+                # pdict
+                ctype, pdict = cgi.parse_header(
+                    self.headers['content-type'])
 
-            # encode the boundary into a byte-type
-            pdict['boundary'] = pdict['boundary'].encode()
+                # encode the boundary into a byte-type
+                pdict['boundary'] = pdict['boundary'].encode()
 
-            # Check if the Content-type is a multipart,
-            # then parse it according to the boundary and extract the message
-            # data
-            if ctype == 'multipart/form-data':
-                fields = cgi.parse_multipart(self.rfile, pdict)
-                messagecontent = fields.get('message')
+                # Check if the Content-type is a multipart,
+                # then parse it according to the boundary and extract the message
+                # data
+                if ctype == 'multipart/form-data':
+                    fields = cgi.parse_multipart(self.rfile, pdict)
+                    messagecontent = fields.get('message')
 
-            # Set the page_title
-            page_title = 'Hello!'
+                # Set the page_title
+                page_title = 'Hello!'
 
-            # combine all the html into 1 output variable
-            output = self.main_page_head.format(title=page_title)
-            output += self.hello_post_page_content.format(
-                message=messagecontent[0].decode())
+                # combine all the html into 1 output variable
+                output = self.main_page_head.format(title=page_title)
+                output += self.hello_post_page_content.format(
+                    message=messagecontent[0].decode())
 
-            self.wfile.write(output.encode())
-            print(output)
+                self.wfile.write(output.encode())
+                print(output)
+                return
 
         except:
             pass
