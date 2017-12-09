@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>{{ restaurant.name }}</title>
+</head>
+<body>
+	<header class="header">
+		<div class="header-inner">
+			<h1>{{ restaurant.name }}</h1>
+		</div>
+	</header>
+	<main>
+		<section class="main-inner">
+			{% for i in items %}
+				<article>
+					<h3>{{ i.name }}</h3>
+					<p>{{ i.description }}</p>
+					<p>{{ i.price }}</p>
+				</article>
+			{% endfor %}
+		</section>
+	</main>
+</body>
+</html>
