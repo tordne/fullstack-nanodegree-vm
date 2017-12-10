@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>{{ restaurant.name }}</title>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+	</head>
+	<body>
+
+		<!-- include the header html -->
+		{% include 'header.html' %}
+
+		<!-- Include the child template -->
+		{% block content %}{% endblock %}
+
+	</body>
+</html>

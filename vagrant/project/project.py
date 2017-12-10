@@ -25,7 +25,12 @@ def restaurantMenu(restaurant_id):
         id=restaurant_id).one()
     items = session.query(MenuItem).filter_by(
         restaurant_id=restaurant_id)
-    return render_template('menu.html', restaurant=restaurant, items=items)
+    return render_template(
+        'menu.html',
+        page_title=restaurant.name,
+        restaurant=restaurant,
+        items=items
+    )
 
 
 # Create a new Menu Item
