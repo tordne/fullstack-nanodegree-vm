@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, redirect, url_for, request
 app = Flask(
     __name__
 )
@@ -34,9 +34,27 @@ def restaurantMenu(restaurant_id):
 
 
 # Create a new Menu Item
-@app.route('/restaurants/<int:restaurant_id>/new/')
+@app.route('/restaurants/<int:restaurant_id>/new/', methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
-    return "page to create a new menu item. Task 1 complete!"
+    restaurant = session.query(Restaurant).filter_by(
+        id=restaurant_id).one()
+    if request.method == 'POST':
+        newItem = MenuItem(
+            name=request.form['name'],
+            restaurant_id=restaurant_id
+        )
+        session.add(newItem)
+        session.commit()
+        return redirect(url_for(
+            'restaurantMenu',
+            restaurant_id=restaurant_id
+        ))
+    else:
+        return render_template(
+            'newmenuitem.html',
+            page_title=restaurant.name,
+            restaurant=restaurant
+        )
 
 
 # Edit a Menu Item

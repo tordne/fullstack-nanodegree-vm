@@ -4,6 +4,7 @@
 
 	<main>
 		<section class="main-inner">
+			<a class="create_restaurant" href="{{ url_for('newMenuItem', restaurant_id=restaurant.id) }}">Create a New Menu Item</a>
 			{% for i in items %}
 				<article class="menuItemDescription">
 					<h3>{{ i.name }}</h3>
