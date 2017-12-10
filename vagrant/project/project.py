@@ -1,5 +1,7 @@
-from flask import Flask, render_template
-app = Flask(__name__)
+from flask import Flask, render_template, url_for
+app = Flask(
+    __name__
+)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -26,21 +28,19 @@ def restaurantMenu(restaurant_id):
     return render_template('menu.html', restaurant=restaurant, items=items)
 
 
-# Create route for newMenuItem function here
+# Create a new Menu Item
 @app.route('/restaurants/<int:restaurant_id>/new/')
 def newMenuItem(restaurant_id):
     return "page to create a new menu item. Task 1 complete!"
 
-# Create route for editMenuItem function here
 
-
+# Edit a Menu Item
 @app.route('/restaurants/<int:restaurant_id>/edit/<int:menu_id>/')
 def editMenuItem(restaurant_id, menu_id):
     return "page to edit a menu item. Task 2 complete!"
 
-# Create a route for deleteMenuItem function here
 
-
+# Delete a Menu Item
 @app.route('/restaurants/<int:restaurant_id>/delete/<int:menu_id>/')
 def deleteMenuItem(restaurant_id, menu_id):
     return "page to delete a menu item. Task 3 complete!"
