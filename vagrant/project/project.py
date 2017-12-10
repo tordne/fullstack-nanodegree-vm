@@ -52,7 +52,7 @@ def newMenuItem(restaurant_id):
     else:
         return render_template(
             'newmenuitem.html',
-            page_title=restaurant.name,
+            page_title="Create a new item for " + restaurant.name,
             restaurant=restaurant
         )
 
