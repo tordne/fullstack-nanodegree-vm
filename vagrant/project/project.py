@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, flash
 app = Flask(
     __name__
 )
@@ -46,6 +46,7 @@ def newMenuItem(restaurant_id):
         )
         session.add(newItem)
         session.commit()
+        flash("New menu item: {name} created.".format(name=newItem.name))
         return redirect(url_for(
             'restaurantMenu',
             restaurant_id=restaurant_id
@@ -71,6 +72,7 @@ def editMenuItem(restaurant_id, menu_id):
             menuitem.name = request.form['name']
             session.add(menuitem)
             session.commit()
+            flash("Menu Item: {name} is edited".format(name=menuitem.name))
         return redirect(url_for(
             'restaurantMenu',
             restaurant_id=restaurant_id
@@ -95,6 +97,7 @@ def deleteMenuItem(restaurant_id, menu_id):
     if request.method == 'POST':
         session.delete(menuitem)
         session.commit()
+        flash("Menu Item: {name} is deleted.".format(name=menuitem.name))
         return redirect(url_for(
             'restaurantMenu',
             restaurant_id=restaurant_id
@@ -109,5 +112,6 @@ def deleteMenuItem(restaurant_id, menu_id):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)

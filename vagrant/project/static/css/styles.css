@@ -46,6 +46,39 @@ p, a {
 	margin-right: auto;
 }
 
+
+/*
+ *
+ * Flash Messages
+ *
+ */
+
+.message-row {
+	min-height: 60px;
+	margin-bottom: 10px
+}
+
+.message-box {
+	background-color: #9de99d;
+	box-shadow: 5px 5px 5px rgba( 0, 0, 0, 0.26);
+	min-height:50px;
+	width: 800px;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	transition: min-height 0.3s;
+	margin-bottom: 10px;
+	line-height: 50px;
+}
+
+.message-text {
+	font-size: 1.5em;
+	text-align: center;
+
+}
+
+
+
 /*
  *
  * Main

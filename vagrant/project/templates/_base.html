@@ -10,8 +10,23 @@
 		<!-- include the header html -->
 		{% include 'header.html' %}
 
+		<!-- messages -->
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		<br>
+		<section class="message-row">
+			{% for message in messages %}
+			<div class="message-box">
+				<p class="message-text">{{ message }}</p>
+			</div>
+			{% endfor %}
+		</section>
+		{% endif %}
+		{% endwith %}
+
 		<!-- Include the child template -->
 		{% block content %}{% endblock %}
+			}
 
 	</body>
 </html>
