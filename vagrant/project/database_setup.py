@@ -14,6 +14,10 @@ class Restaurant(Base):
     name = Column(String(80), nullable=False)
     id = Column(Integer, primary_key=True)
 
+    def __repr__(self):
+        return "<Restaurant(id='%s', name='%s')>" % (
+            self.id, self.name)
+
 
 class MenuItem(Base):
     __tablename__ = 'menu_item'
@@ -31,12 +35,16 @@ class MenuItem(Base):
     def serialize(self):
         # Returns object data in easily serializeable format
         return {
-        'name': self.name,
-        'description': self.description,
-        'id': self.id,
-        'price': self.price,
-        'course': self.course,
+            'name': self.name,
+            'description': self.description,
+            'id': self.id,
+            'price': self.price,
+            'course': self.course,
         }
+
+    def __repr__(self):
+        return "<MenuItem(id='%s', name='%s', price='%s', course='%s', )>" % (
+            self.id, self.name, self.price, self.course)
 
 
 engine = create_engine('sqlite:///restaurantmenu.db')
