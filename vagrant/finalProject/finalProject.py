@@ -43,10 +43,15 @@ def restaurantNew():
     return render_template("restaurants_new.html")
 
 
-@app.route('/restaurants/edit/<int:restaurant_id>/')
+@app.route('/restaurants/edit/<int:restaurant_id>/', methods=['GET', 'POST'])
 def restaurantEdit(restaurant_id):
-    restaurant = session.query(Restaurant).filter(Restaurant.id == 1).one()
+    restaurant = session.query(Restaurant).filter(Restaurant.id == restaurant_id).one()
     page_title = "Rename " + restaurant.name
+    if request.method == 'POST':
+        restaurant.name = request.form['name']
+        session.add(restaurant)
+        session.commit()
+        return redirect(url_for('restaurantList'))
     return render_template(
         "restaurants_edit.html",
         title=page_title,
@@ -77,7 +82,7 @@ def menuList(restaurant_id):
 
 @app.route('/restaurants/<int:restaurant_id>/menu/new/')
 def menuItemNew(restaurant_id):
-    restaurant = session.query(Restaurant).filter(Restaurant.id == 1).one()
+    restaurant = session.query(Restaurant).filter(Restaurant.id == restaurant_id).one()
     page_title = "Create New Menu Item for " + restaurant.name
     return render_template(
         "menu_item_new.html",
