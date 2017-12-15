@@ -8,6 +8,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
 
+import pdb
+
 # Create the DB engine
 engine = create_engine('sqlite:///restaurantmenu.db')
 # Bind the engine to the Base.metadata
@@ -26,6 +28,7 @@ def restaurantMenuJSON(restaurant_id):
         id=restaurant_id).one()
     items = session.query(MenuItem).filter_by(
         restaurant_id=restaurant_id).all()
+    pdb.set_trace()
     return jsonify(MenuItems=[i.serialize for i in items])
 
 

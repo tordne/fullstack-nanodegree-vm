@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, jsonify
 
 app = Flask(__name__)
 
@@ -18,6 +18,24 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 # Create a session connecting to the staging zone
 session = DBSession()
+
+
+@app.route('/restaurants/JSON/')
+def restaurantListJSON():
+    rest = session.query(Restaurant).all()
+    return jsonify(Restaurants=[r.serialize for r in rest])
+
+
+@app.route('/restaurants/<int:restaurant_id>/JSON/')
+def restaurantMenuJSON(restaurant_id):
+    restaurant = session.query(Restaurant).filter(Restaurant.id == restaurant_id).one()
+    return jsonify(MenuItems=[i.serialize for i in restaurant.menu_items])
+
+
+@app.route('/restaurants/<int:restaurant_id>/item/<int:menu_id>/JSON/')
+def restaurantMenuItemJSON(restaurant_id, menu_id):
+    query = session.query(Restaurant, MenuItem).join(MenuItem).filter(MenuItem.id == menu_id).one()
+    return jsonify(MenuItems=[query.MenuItem.serialize])
 
 
 @app.route('/')

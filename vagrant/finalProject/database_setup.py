@@ -18,6 +18,14 @@ class Restaurant(Base):
         order_by="MenuItem.course",
         back_populates="restaurant")
 
+    @property
+    def serialize(self):
+        # Returns object data in easily serializeable format
+        return {
+            'id': self.id,
+            'name': self.name,
+        }
+
     def __repr__(self):
         return "<Restaurant(id='%s', name='%s')>" % (
             self.id, self.name)
