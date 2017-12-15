@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request, redirect
 
 app = Flask(__name__)
 
@@ -32,9 +32,14 @@ def restaurantList():
     )
 
 
-@app.route('/restaurants/new/')
+@app.route('/restaurants/new/', methods=['GET', 'POST'])
 def restaurantNew():
-
+    if request.method == 'POST':
+        restaurant = Restaurant(
+            name=request.form['name'])
+        session.add(restaurant)
+        session.commit()
+        return redirect(url_for('restaurantList'))
     return render_template("restaurants_new.html")
 
 
