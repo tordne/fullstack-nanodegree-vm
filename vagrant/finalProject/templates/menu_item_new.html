@@ -1,0 +1,22 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+	<main>
+		<section class="main-inner">
+			<form class="menuItemForm" action="{{ url_for('menuItemNew', restaurant_id=restaurant.id) }}" method="POST">
+				<h3>Name:</h3>
+				<input type="text" size="30" name="name">
+				<h3>Course:</h3>
+				<input type="text" size="30" name="course">
+				<h3>Description:</h3>
+				<input type="text" size="30" name="description">
+				<h3>Price:</h3>
+				<input type="text" size="30" name="price">
+				<input type="submit" value="Create">
+				<a href="{{ url_for('menuList', restaurant_id=restaurant.id) }}">Cancel</a>
+			</form>
+		</section>
+	</main>
+
+{% endblock content %}

@@ -117,3 +117,15 @@ main {
  .menuItemDescription {
  	margin-bottom: 20px;
  }
+
+ .menuItemFlex {
+ 	display: flex;
+ }
+
+ .menuItemDescrip {
+ 	width: 400px;
+ }
+
+ .menuItemForm {
+ 	display: block;
+ }

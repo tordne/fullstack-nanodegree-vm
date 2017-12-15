@@ -13,7 +13,10 @@ class Restaurant(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    menu_items = relationship("MenuItem", back_populates="restaurant")
+    menu_items = relationship(
+        "MenuItem",
+        order_by="MenuItem.course",
+        back_populates="restaurant")
 
     def __repr__(self):
         return "<Restaurant(id='%s', name='%s')>" % (

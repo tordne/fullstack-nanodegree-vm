@@ -1,0 +1,18 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+	<main>
+		<section class="main-inner">
+			<a class="create_restaurant" href="{{ url_for('restaurantNew') }}">Create a New Restaurant</a>
+			{% for i in restaurant %}
+				<article class="restaurant">
+					<h3>{{ i.name }}</h3>
+					<a href="{{ url_for('restaurantEdit',restaurant_id=i.id) }}">Edit</a>
+					<a href="{{ url_for('restaurantDelete', restaurant_id=i.id) }}">Delete</a>
+				</article>
+			{% endfor %}
+		</section>
+	</main>
+
+{% endblock content %}
