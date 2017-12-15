@@ -105,10 +105,18 @@ def menuItemNew(restaurant_id):
         restaurant=restaurant)
 
 
-@app.route('/restaurants/<int:restaurant_id>/menu/edit/<int:menu_id>')
+@app.route('/restaurants/<int:restaurant_id>/menu/edit/<int:menu_id>', methods=['GET', 'POST'])
 def menuItemEdit(restaurant_id, menu_id):
     query = session.query(Restaurant, MenuItem).join(MenuItem).filter(MenuItem.id == menu_id).one()
     page_title = "Edit Menu Item: " + query.MenuItem.name
+    if request.method == 'POST':
+        query.MenuItem.name=request.form['name']
+        query.MenuItem.course=request.form['course']
+        query.MenuItem.description=request.form['description']
+        query.MenuItem.price=request.form['price']
+        session.add(query.MenuItem)
+        session.commit()
+        return redirect(url_for('menuList', restaurant_id=query.Restaurant.id))
     return render_template(
         "menu_item_edit.html",
         title=page_title,
