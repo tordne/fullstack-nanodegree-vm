@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, jsonify
+from flask import Flask, render_template, url_for, request, redirect, jsonify, flash
 
 app = Flask(__name__)
 
@@ -57,6 +57,7 @@ def restaurantNew():
             name=request.form['name'])
         session.add(restaurant)
         session.commit()
+        flash('New Restaurant Created')
         return redirect(url_for('restaurantList'))
     return render_template("restaurants_new.html")
 
@@ -69,6 +70,7 @@ def restaurantEdit(restaurant_id):
         restaurant.name = request.form['name']
         session.add(restaurant)
         session.commit()
+        flash('Restaurant Successfully Edited')
         return redirect(url_for('restaurantList'))
     return render_template(
         "restaurants_edit.html",
@@ -83,6 +85,7 @@ def restaurantDelete(restaurant_id):
     if request.method == 'POST':
         session.delete(restaurant)
         session.commit()
+        flash('Restaurant Successfully Deleted')
         return redirect(url_for('restaurantList'))
     return render_template(
         "restaurants_delete.html",
@@ -116,6 +119,7 @@ def menuItemNew(restaurant_id):
             )
         session.add(item)
         session.commit()
+        flash('Menu Item Created')
         return redirect(url_for('menuList', restaurant_id=restaurant.id))
     return render_template(
         "menu_item_new.html",
@@ -134,6 +138,7 @@ def menuItemEdit(restaurant_id, menu_id):
         query.MenuItem.price=request.form['price']
         session.add(query.MenuItem)
         session.commit()
+        flash('Menu Item Successfully Edited')
         return redirect(url_for('menuList', restaurant_id=query.Restaurant.id))
     return render_template(
         "menu_item_edit.html",
@@ -149,6 +154,7 @@ def menuItemDelete(restaurant_id, menu_id):
     if request.method == 'POST':
         session.delete(query.MenuItem)
         session.commit()
+        flash('Menu Item Successfully Deleted')
         return redirect(url_for('menuList', restaurant_id=query.Restaurant.id))
     return render_template(
         "menu_item_delete.html",
@@ -158,6 +164,7 @@ def menuItemDelete(restaurant_id, menu_id):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'VerySecretKey'
     # Debug the application
     app.debug = True
     # Run the server
